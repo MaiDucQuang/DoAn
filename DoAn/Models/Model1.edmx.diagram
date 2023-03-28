@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="05b20e43cd274b7d8e722515b2a2b626" Name="Diagram1">
+        <EntityTypeShape EntityType="DoAnModel.tb_Category" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_Customer" Width="1.5" PointX="0.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_Order" Width="1.5" PointX="3" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_OrderDetail" Width="1.5" PointX="5.25" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_Product" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_Supplier" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_User" Width="1.5" PointX="8" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="DoAnModel.tb_UserRole" Width="1.5" PointX="5.75" PointY="5.75" IsExpanded="true" />
+        <AssociationConnector Association="DoAnModel.FK_tb_Product_tb_Category" ManuallyRouted="false" />
+        <AssociationConnector Association="DoAnModel.FK_tb_Order_tb_Customer" ManuallyRouted="false" />
+        <AssociationConnector Association="DoAnModel.FK_tb_OrderDetail_tb_Order" ManuallyRouted="false" />
+        <AssociationConnector Association="DoAnModel.FK_tb_OrderDetail_tb_Product" ManuallyRouted="false" />
+        <AssociationConnector Association="DoAnModel.FK_tb_Product_tb_Supplier" ManuallyRouted="false" />
+        <AssociationConnector Association="DoAnModel.FK_tb_User_tb_UserRole" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
