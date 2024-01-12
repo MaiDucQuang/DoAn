@@ -1,0 +1,121 @@
+private void GridView_FocusedRowChanged(object sender, DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs e)
+        {
+            // Xử lý khi dòng được chọn thay đổi
+            var selectedProduct = gridView.GetFocusedRow() as Product;
+
+            if (selectedProduct != null)
+            {
+                // Hiển thị thông tin từ dòng được chọn lên các TextEdit
+                textEditProductName.Text = selectedProduct.ProductName;
+                textEditProductQuantity.Text = selectedProduct.ProductQuantity.ToString();
+                textEditProductPrice.Text = selectedProduct.ProductPrice.ToString();
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            // Lấy thông tin từ các TextEdit
+            string productName = textEditProductName.Text;
+            int productQuantity = Convert.ToInt32(textEditProductQuantity.Text);
+            decimal productPrice = Convert.ToDecimal(textEditProductPrice.Text);
+
+            // Thêm sản phẩm vào cơ sở dữ liệu
+            using (var context = new AppDbContext())
+            {
+                context.Products.Add(new Product
+                {
+                    ProductName = productName,
+                    ProductQuantity = productQuantity,
+                    ProductPrice = productPrice
+                });
+
+                context.SaveChanges();
+            }
+
+            // Làm mới dữ liệu trên gridControl
+            RefreshData();
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            // Lấy thông tin sản phẩm đang được chọn trong GridControl
+            var selectedProduct = gridView.GetFocusedRow() as Product;
+
+            if (selectedProduct != null)
+            {
+                // Lấy thông tin từ các TextEdit
+                string productName = textEditProductName.Text;
+                int productQuantity = Convert.ToInt32(textEditProductQuantity.Text);
+                decimal productPrice = Convert.ToDecimal(textEditProductPrice.Text);
+
+                // Cập nhật thông tin sản phẩm trong cơ sở dữ liệu
+                using (var context = new AppDbContext())
+                {
+                    var productToUpdate = context.Products.Find(selectedProduct.ProductId);
+                    if (productToUpdate != null)
+                    {
+                        productToUpdate.ProductName = productName;
+                        productToUpdate.ProductQuantity = productQuantity;
+                        productToUpdate.ProductPrice = productPrice;
+
+                        context.SaveChanges();
+                    }
+                }
+
+                // Làm mới dữ liệu trên gridControl
+                RefreshData();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            // Lấy thông tin sản phẩm đang được chọn trong GridControl
+            var selectedProduct = gridView.GetFocusedRow() as Product;
+
+            if (selectedProduct != null)
+            {
+                // Xác nhận xóa từ người dùng
+                DialogResult result = MessageBox.Show(
+                    $"Bạn có chắc chắn muốn xóa sản phẩm '{selectedProduct.ProductName}' không?",
+                    "Xác Nhận Xóa",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        // Xóa sản phẩm từ cơ sở dữ liệu
+                        using (var context = new AppDbContext())
+                        {
+                            var productToDelete = context.Products.Find(selectedProduct.ProductId);
+
+                            if (productToDelete != null)
+                            {
+                                context.Products.Remove(productToDelete);
+                                context.SaveChanges();
+                            }
+                        }
+
+                        // Làm mới dữ liệu trên gridControl
+                        RefreshData();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Xử lý lỗi nếu có
+                        MessageBox.Show($"Lỗi xóa sản phẩm: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xóa.", "Thông Báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void RefreshData()
+        {
+            using (var context = new AppDbContext())
+            {
+                gridControl.DataSource = context.Products.ToList();
