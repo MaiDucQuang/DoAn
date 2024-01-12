@@ -1,0 +1,50 @@
+
+private void btnAddToInvoice_Click(object sender, EventArgs e)
+        {
+            // Lấy thông tin sản phẩm được chọn từ gridControl
+            var selectedProduct = gridView.GetFocusedRow() as Product;
+
+            if (selectedProduct != null)
+            {
+                // Lấy thông tin nhập liệu từ các controls khác trên form
+                int quantityToSell = Convert.ToInt32(textEditQuantityToSell.Text);
+                decimal sellingPrice = Convert.ToDecimal(textEditSellingPrice.Text);
+
+                // Trừ số lượng tồn kho
+                int newQuantityInStock = selectedProduct.ProductQuantity - quantityToSell;
+
+                // Cập nhật số lượng tồn kho trong bảng Product
+                using (var context = new AppDbContext())
+                {
+                    var productToUpdate = context.Products.Find(selectedProduct.ProductId);
+
+                    if (productToUpdate != null)
+                    {
+                        // Cập nhật số lượng tồn kho
+                        productToUpdate.Product_Quantity = newQuantityInStock;
+
+                        // Cập nhật trạng thái sản phẩm nếu số lượng là 0
+                        if (newQuantityInStock == 0)
+                        {
+                            productToUpdate.Product_Status = "Hết hàng";
+                        }
+
+                        context.SaveChanges();
+                    }
+
+                    // Thêm dữ liệu vào bảng chi tiết hóa đơn
+                    var invoiceDetail = new InvoiceDetail
+                    {
+                        ProductId = selectedProduct.ProductId,
+                        Quantity = quantityToSell,
+                        UnitPrice = sellingPrice
+                        // Các thông tin khác nếu cần
+                    };
+
+                    context.InvoiceDetails.Add(invoiceDetail);
+                    context.SaveChanges();
+                }
+
+                // Làm mới danh sách sản phẩm được chọn trên gridControl
+                RefreshInvoiceDetail();
+            }
